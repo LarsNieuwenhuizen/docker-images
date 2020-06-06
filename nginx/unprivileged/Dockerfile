@@ -13,7 +13,9 @@ RUN sed -i -e '/listen/!b' -e '/80;/!b' -e 's/80;/8080;/' /etc/nginx/conf.d/defa
     && sed -i "/^http {/a \    proxy_temp_path /tmp/proxy_temp;\n    client_body_temp_path /tmp/client_temp;\n    fastcgi_temp_path /tmp/fastcgi_temp;\n    uwsgi_temp_path /tmp/uwsgi_temp;\n    scgi_temp_path /tmp/scgi_temp;\n" /etc/nginx/nginx.conf \
 # nginx user must own the cache directory to write cache
     && chown -R 101:101 /var/cache/nginx \
-    && chmod -R g+w /var/cache/nginx
+    && chmod -R g+w /var/cache/nginx \
+    && mkdir -p /var/www \
+    && chown -R 101:101 /var/www
 
 ADD default.conf /etc/nginx/conf.d/default.conf
 ADD nginx.conf /etc/nginx/nginx.conf
@@ -23,6 +25,8 @@ ADD key.pem /etc/nginx/conf.d/key.pem
 EXPOSE 8080 6443
 
 STOPSIGNAL SIGTERM
+
+WORKDIR /var/www
 
 USER 101
 

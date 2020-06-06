@@ -1,9 +1,5 @@
 name: Build nginx brotli
 
-on:
-  push:
-    branches: master
-
 jobs:
   build:
     runs-on: ubuntu-latest

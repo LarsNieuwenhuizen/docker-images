@@ -1,4 +1,4 @@
-FROM fholzer/nginx-brotli
+FROM larsnieuwenhuizen/nginx-brotli
 
 RUN set -x \
     # forward request and error logs to docker log collector

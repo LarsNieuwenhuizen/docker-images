@@ -16,6 +16,7 @@ RUN sed -i -e '/listen/!b' -e '/80;/!b' -e 's/80;/8080;/' /etc/nginx/conf.d/defa
     && chmod -R g+w /var/cache/nginx
 
 ADD default.conf /etc/nginx/conf.d/default.conf
+ADD nginx.conf /etc/nginx/nginx.conf
 ADD cert.pem /etc/nginx/conf.d/cert.pem
 ADD key.pem /etc/nginx/conf.d/key.pem
 

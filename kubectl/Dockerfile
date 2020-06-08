@@ -11,6 +11,7 @@ RUN set -eux; \
     addgroup -g 998 -S kubectl; \
     adduser -u 998 -D -G kubectl -h /home/kubectl -S kubectl; \
     mkdir /home/kubectl/bin; \
+    mkdir /home/kubect/workdir; \
     mv ./kubectl /home/kubectl/bin; \
     chown -R kubectl:kubectl /home/kubectl
 
@@ -18,6 +19,6 @@ ENV PATH="/home/kubectl/bin:$PATH"
 
 USER kubectl
 
-WORKDIR /home/kubectl
+WORKDIR /home/kubectl/workdir
 
 ENTRYPOINT ["kubectl"]

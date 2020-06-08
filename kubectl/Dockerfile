@@ -11,7 +11,7 @@ RUN set -eux; \
     addgroup -g 998 -S kubectl; \
     adduser -u 998 -D -G kubectl -h /home/kubectl -S kubectl; \
     mkdir /home/kubectl/bin; \
-    mkdir /home/kubect/workdir; \
+    mkdir /home/kubectl/workdir; \
     mv ./kubectl /home/kubectl/bin; \
     chown -R kubectl:kubectl /home/kubectl
 

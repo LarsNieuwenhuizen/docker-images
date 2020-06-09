@@ -3,7 +3,7 @@ FROM alpine:latest
 RUN set -eux; \
     apk update; \
     apk upgrade; \
-    apk add --no-cache ca-certificates curl git ssh-client; \
+    apk add --no-cache ca-certificates curl git openssh; \
     update-ca-certificates --fresh; \
     curl -LO https://storage.googleapis.com/kubernetes-release/release/`curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt`/bin/linux/amd64/kubectl; \
     chmod +x ./kubectl; \

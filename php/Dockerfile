@@ -66,18 +66,10 @@ ARG PHP_VERSION=7.2
 ARG DEBIAN_FRONTEND=noninteractive
 
 # Install composer
-COPY install-composer.sh /opt/local/install-composer.sh
-RUN /opt/local/install-composer.sh
-
-RUN set -eux; \
-    mkdir -p /opt/local/composer; \
-    mkdir -p /var/cache/composer; \
-    chmod -R 777 /var/cache/composer;
+COPY --from=composer:2.0.12 /usr/bin/composer /usr/bin/composer
 
 ENV COMPOSER_CACHE_DIR="/var/cache/composer"
-ENV COMPOSER_HOME="/opt/local/composer"
 ENV COMPOSER_ALLOW_SUPERUSER 1
-ENV PATH="/opt/local/composer/vendor/bin:${PATH}"
 
 RUN set -eux; \
     apt-get update; \

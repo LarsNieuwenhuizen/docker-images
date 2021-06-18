@@ -2,7 +2,7 @@
 
 set -eu;
 
-supportedVersions=('7.4')
+supportedVersions=('7.4' '8.0')
 buildVersions=()
 
 for version in $@; do

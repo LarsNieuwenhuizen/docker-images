@@ -2,8 +2,8 @@
 
 set -eu;
 
-supportedVersions=('7.4','8.0')
-buildVersions=('8.0')
+supportedVersions=('7.4' '8.0')
+buildVersions=()
 
 for version in $@; do
   if ! [[ ${supportedVersions[*]} =~ $version ]]; then

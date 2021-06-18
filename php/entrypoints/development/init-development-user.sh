@@ -9,11 +9,10 @@ groupExists=$(getent group ${GROUP_ID} | cut -d':' -f 1)
 if [ "${groupExists}" == "" ]; then
     addgroup \
       --gid ${GROUP_ID} \
-      dockerlocal
+      developmentlocal
 else
-  groupmod --new-name dockerlocal ${groupExists}
+  groupmod --new-name developmentlocal ${groupExists}
 fi
-
 
 if [ "${userExists}" == "" ]; then
     adduser \
@@ -21,7 +20,7 @@ if [ "${userExists}" == "" ]; then
       --uid ${USER_ID} \
       --gid ${GROUP_ID} \
       --system \
-      docker
+      development
 else
-  usermod -l docker ${userExists}
+  usermod -l development ${userExists}
 fi

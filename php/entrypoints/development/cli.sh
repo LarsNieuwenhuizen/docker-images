@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
-/opt/local/entrypoints/init-local-user.sh
+/opt/local/entrypoints/development/init-development-user.sh
 
 exec /bin/su docker -c "/usr/bin/php $@"

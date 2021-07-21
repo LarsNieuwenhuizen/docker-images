@@ -1,9 +1,14 @@
 name: Build kubectl latest
 
 on:
-  push:
-    branches:
-    - master
+  schedule:
+    - cron: '0 0 1,15 * *'
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Docker image tag - defaults to latest'
+        required: false
+        default: 'latest'
 
 jobs:
   build:
@@ -19,4 +24,4 @@ jobs:
       - name: login to docker hub
         run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
       - name: Build the webserver
-        run: cd ${GITHUB_WORKSPACE}/kubectl/ && docker buildx build --platform linux/amd64,linux/arm64,linux/arm/v7 -t larsnieuwenhuizen/kubectl . --push
+        run: cd ${GITHUB_WORKSPACE}/kubectl/ && docker buildx build --platform linux/amd64,linux/arm64,linux/arm/v7 -t larsnieuwenhuizen/kubectl:${{ github.event.inputs.tag }} . --push

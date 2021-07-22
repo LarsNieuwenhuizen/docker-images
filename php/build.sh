@@ -20,6 +20,6 @@ fi
 
 # Build images
 for version in ${buildVersions[*]}; do
-  docker build --no-cache -t larsnieuwenhuizen/php-fpm:${version} --build-arg PHP_VERSION=${version} .
-  docker build --no-cache -t larsnieuwenhuizen/php-fpm:${version}-dev --build-arg PHP_VERSION="${version}" --build-arg CONTEXT=development .
+  DOCKER_BUILDKIT=1 docker build --no-cache -t larsnieuwenhuizen/php-fpm:${version} --build-arg PHP_VERSION=${version} .
+  DOCKER_BUILDKIT=1 docker build --no-cache -t larsnieuwenhuizen/php-fpm:${version}-dev --build-arg PHP_VERSION="${version}" --build-arg CONTEXT=development .
 done

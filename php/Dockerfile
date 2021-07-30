@@ -38,12 +38,13 @@ RUN set -eux; \
     composer global require "squizlabs/php_codesniffer"; \
     composer global require "phpunit/phpunit"; \
     composer global require "localheinz/composer-normalize"; \
-    rm -rf /var/cache/composer/*;
+    rm -rf /var/cache/composer/*; \
+    chmod -R 777 /var/cache/composer
 
 COPY php-fpm-pool.conf /etc/php/${PHP_VERSION}/fpm/pool.d/www.conf
 COPY php.ini /etc/php/${PHP_VERSION}/conf.d/9999-php.ini
 
-ENTRYPOINT ["/opt/local/entrypoints/entrypoint-cli.sh"]
+ENTRYPOINT ["/opt/local/entrypoints/cli.sh"]
 
 FROM base AS production
 

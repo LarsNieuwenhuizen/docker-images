@@ -20,6 +20,10 @@ fi
 
 # Build images
 for version in ${buildVersions[*]}; do
+  patchVersion=$(docker run --rm --entrypoint=php larsnieuwenhuizen/php-fpm:${version} -v | pcregrep -o1 "${version}.([0-9]+)" | head -n 1)
+
   docker push larsnieuwenhuizen/php-fpm:${version}
+  docker push larsnieuwenhuizen/php-fpm:${version}.${patchVersion}
   docker push larsnieuwenhuizen/php-fpm:${version}-dev
+  docker push larsnieuwenhuizen/php-fpm:${version}.${patchVersion}-dev
 done

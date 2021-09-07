@@ -20,6 +20,18 @@ fi
 
 # Build images
 for version in ${buildVersions[*]}; do
-  DOCKER_BUILDKIT=1 docker build --no-cache -t larsnieuwenhuizen/php-fpm:${version} --build-arg PHP_VERSION=${version} .
-  DOCKER_BUILDKIT=1 docker build --no-cache -t larsnieuwenhuizen/php-fpm:${version}-dev --build-arg PHP_VERSION="${version}" --build-arg CONTEXT=development .
+  DOCKER_BUILDKIT=1 docker build \
+      --no-cache \
+      -t larsnieuwenhuizen/php-fpm:${version} \
+      --build-arg PHP_VERSION=${version} .
+
+  DOCKER_BUILDKIT=1 docker build \
+      --no-cache \
+      -t larsnieuwenhuizen/php-fpm:${version}-dev \
+      --build-arg PHP_VERSION="${version}" \
+       --build-arg CONTEXT=development .
+
+  patchVersion=$(docker run --rm --entrypoint=php larsnieuwenhuizen/php-fpm:${version} -v | pcregrep -o1 "${version}.([0-9]+)" | head -n 1)
+  docker tag larsnieuwenhuizen/php-fpm:${version} larsnieuwenhuizen/php-fpm:${version}.${patchVersion}
+  docker tag larsnieuwenhuizen/php-fpm:${version}-dev larsnieuwenhuizen/php-fpm:${version}.${patchVersion}-dev
 done

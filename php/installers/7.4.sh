@@ -42,8 +42,7 @@ set -eux; \
         gettext \
         graphicsmagick \
         unzip; \
-    AUTO_ADDED_PACKAGES=`apt-mark showauto`; \
-    apt-get remove --purge -y python3 $AUTO_ADDED_PACKAGES; \
+    apt-get remove -y python3; \
     apt-get clean -y; \
     apt-get autoremove -y; \
     rm -rf /var/lib/apt/lists/*; \

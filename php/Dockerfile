@@ -31,7 +31,7 @@ ENV COMPOSER_ALLOW_SUPERUSER 1
 RUN set -eux; \
     apt-get update; \
     apt-get install -y \
-        php-xdebug git; \
+        php${PHP_VERSION}-xdebug git; \
     apt-get autoremove -y; \
     apt-get clean -y; \
     rm -rf /var/lib/apt/lists/*; \

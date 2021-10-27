@@ -1,5 +1,3 @@
-ARG CONTEXT=production
-
 ##
 ## baseimage
 ##
@@ -8,8 +6,8 @@ FROM debian:buster-slim AS base
 ARG PHP_VERSION=7.4
 ARG DEBIAN_FRONTEND=noninteractive
 
-ADD entrypoints /opt/local/entrypoints
-ADD installers /opt/local/installers
+COPY entrypoints /opt/local/entrypoints
+COPY installers /opt/local/installers
 
 RUN /opt/local/installers/${PHP_VERSION}.sh; \
     rm -rf /opt/local/installers;
@@ -49,10 +47,5 @@ ENTRYPOINT ["/opt/local/entrypoints/cli.sh"]
 FROM base AS production
 
 ENTRYPOINT ["/usr/bin/php"]
-
-##
-## Actual output image
-##
-FROM ${CONTEXT}
 
 MAINTAINER Lars Nieuwenhuizen

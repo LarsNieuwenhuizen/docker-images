@@ -2,6 +2,7 @@
 
 set -eux; \
     apt-get update; \
+    apt-get upgrade -y; \
     apt-get install -y \
         apt-transport-https \
         ca-certificates \
@@ -29,6 +30,7 @@ set -eux; \
         php8.1-mysql \
         php8.1-opcache \
         php8.1-pgsql \
+        php8.1-pdo \
         php8.1-soap \
         php8.1-sqlite3 \
         php8.1-tidy \

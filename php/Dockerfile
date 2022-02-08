@@ -4,13 +4,19 @@
 FROM debian:buster-slim AS base
 
 ARG PHP_VERSION=7.4
+ARG LATEST_PHP_VERSION=8.1
 ARG DEBIAN_FRONTEND=noninteractive
 
 COPY entrypoints /opt/local/entrypoints
 COPY installers /opt/local/installers
 
 RUN /opt/local/installers/${PHP_VERSION}.sh; \
-    rm -rf /opt/local/installers;
+    rm -rf /opt/local/installers; \
+    update-alternatives --set php /usr/bin/php${PHP_VERSION}
+
+RUN if [ "$PHP_VERSION" != "$LATEST_PHP_VERSION" ]; then \
+    apt-get purge -y php${LATEST_PHP_VERSION}*; \
+fi
 
 ##
 ## development images
@@ -21,7 +27,7 @@ ARG PHP_VERSION=7.4
 ARG DEBIAN_FRONTEND=noninteractive
 
 # Install composer
-COPY --from=composer:2.1 /usr/bin/composer /usr/bin/composer
+COPY --from=composer:2.2 /usr/bin/composer /usr/bin/composer
 
 ENV COMPOSER_CACHE_DIR="/var/cache/composer"
 ENV COMPOSER_ALLOW_SUPERUSER 1

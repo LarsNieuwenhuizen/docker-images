@@ -2,6 +2,7 @@
 
 set -eux; \
     apt-get update; \
+    apt-get upgrade -y; \
     apt-get install -y \
         apt-transport-https \
         ca-certificates \
@@ -28,6 +29,7 @@ set -eux; \
         php8.0-mbstring \
         php8.0-mysql \
         php8.0-opcache \
+        php8.0-pdo \
         php8.0-pgsql \
         php8.0-soap \
         php8.0-sqlite3 \

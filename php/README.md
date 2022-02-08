@@ -7,6 +7,12 @@ The build process installs the most commonly used (in my opinion) php packages.
 - 7.4-dev as `larsnieuwenhuizen/php-fpm:7.4-dev`
 - 8.0 as `larsnieuwenhuizen/php-fpm:8.0`
 - 8.0-dev as `larsnieuwenhuizen/php-fpm:8.0-dev`
+- 8.1 as `larsnieuwenhuizen/php-fpm:8.1`
+- 8.1-dev as `larsnieuwenhuizen/php-fpm:8.1-dev`
+
+## Version pinning
+Every minor version is also tagged with the specific patch version on build.
+So if you want to use a specific version like 8.1.1 you can use it.
 
 ---
 
@@ -17,6 +23,7 @@ This purely installs the necessary php packages and that's it
 Everything included in the production build, but also installs
 - composer
 - phpcs
+- phpunit
 - xdebug
 - composer normalize
 
@@ -34,7 +41,7 @@ php-fpm is configured to be able to be started by docker (9001).
 So to use this image as your own php-fpm container as non root do this:
 
 ```dockerfile
-FROM larsnieuwenhuizen/php-fpm:8.0
+FROM larsnieuwenhuizen/php-fpm:8.1
 
 # Add your statements here
 

@@ -1,7 +1,27 @@
+FROM debian:bullseye-slim AS base
+ARG PHP_VERSION=7.4
+ARG LATEST_PHP_VERSION=8.1
+ARG DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update; \
+    apt-get upgrade -y; \
+    apt-get install -y \
+        apt-transport-https \
+        ca-certificates \
+        curl \
+        gnupg2 \
+        lsb-release \
+        wget; \
+    wget https://packages.sury.org/php/apt.gpg; \
+    apt-key add apt.gpg; \
+    echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" | tee /etc/apt/sources.list.d/php.list; \
+    apt-get update; \
+    apt-get install -y php${PHP_VERSION}
+
 ##
-## baseimage
+## Production
 ##
-FROM debian:buster-slim AS base
+FROM base AS production
 
 ARG PHP_VERSION=7.4
 ARG LATEST_PHP_VERSION=8.1
@@ -19,9 +39,9 @@ RUN if [ "$PHP_VERSION" != "$LATEST_PHP_VERSION" ]; then \
 fi
 
 ##
-## development images
+## Development
 ##
-FROM base AS development
+FROM production AS development
 
 ARG PHP_VERSION=7.4
 ARG DEBIAN_FRONTEND=noninteractive
@@ -49,9 +69,5 @@ COPY php-fpm-pool.conf /etc/php/${PHP_VERSION}/fpm/pool.d/www.conf
 COPY php.ini /etc/php/${PHP_VERSION}/conf.d/9999-php.ini
 
 ENTRYPOINT ["/opt/local/entrypoints/cli.sh"]
-
-FROM base AS production
-
-ENTRYPOINT ["/usr/bin/php"]
 
 MAINTAINER Lars Nieuwenhuizen

@@ -1,19 +1,6 @@
 #!/usr/bin/env bash
 
 set -eux; \
-    apt-get update; \
-    apt-get upgrade -y; \
-    apt-get install -y \
-        apt-transport-https \
-        ca-certificates \
-        curl \
-        gnupg2 \
-        lsb-release \
-        wget; \
-    wget https://packages.sury.org/php/apt.gpg; \
-    apt-key add apt.gpg; \
-    echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" | tee /etc/apt/sources.list.d/php.list; \
-    apt-get update; \
     apt-get install -y \
         php8.0 \
         php8.0-bcmath \

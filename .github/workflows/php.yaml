@@ -18,5 +18,8 @@ jobs:
       - name: Install pcregrep
         run: sudo apt install -y pcregrep
 
+      - name: Enable buildx
+        run: docker buildx create --use
+
       - name: Build and push images
         run: cd php && ./build.sh

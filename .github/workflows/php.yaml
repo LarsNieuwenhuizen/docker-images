@@ -18,8 +18,12 @@ jobs:
       - name: Install pcregrep
         run: sudo apt install -y pcregrep
 
-      - name: Enable buildx
-        run: docker buildx create --use
+      - name: Set up Docker Buildx
+        id: buildx
+        uses: crazy-max/ghaction-docker-buildx@v3
+        with:
+          buildx-version: latest
+          qemu-version: latest
 
       - name: Build and push images
         run: cd php && ./build.sh

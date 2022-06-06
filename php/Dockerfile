@@ -47,7 +47,7 @@ ARG PHP_VERSION=7.4
 ARG DEBIAN_FRONTEND=noninteractive
 
 # Install composer
-COPY --from=composer:2.2 /usr/bin/composer /usr/bin/composer
+COPY --from=composer:2.3 /usr/bin/composer /usr/bin/composer
 
 ENV COMPOSER_CACHE_DIR="/var/cache/composer"
 ENV COMPOSER_ALLOW_SUPERUSER 1

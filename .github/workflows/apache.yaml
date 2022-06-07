@@ -1,0 +1,27 @@
+name: Build httpd image
+
+on:
+  schedule:
+    - cron: '0 10 * * 1'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: login to docker hub
+        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+
+      - name: Set up Docker Buildx
+        id: buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Build and push images
+        run: |
+          cd ${GITHUB_WORKSPACE}/apache; \
+          DOCKER_BUILDKIT=1 docker buildx build \
+            --platform linux/amd64,linux/arm64 \
+            -t larsnieuwenhuizen/httpd:${version} --push .

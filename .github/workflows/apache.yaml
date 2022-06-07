@@ -24,4 +24,4 @@ jobs:
           cd ${GITHUB_WORKSPACE}/apache; \
           DOCKER_BUILDKIT=1 docker buildx build \
             --platform linux/amd64,linux/arm64 \
-            -t larsnieuwenhuizen/httpd:${version} --push .
+            -t larsnieuwenhuizen/httpd --push .

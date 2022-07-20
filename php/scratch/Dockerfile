@@ -63,7 +63,9 @@ RUN make -j8 && make install
 
 FROM alpine:latest as production
 
-RUN apk add libxml2 icu shadow oniguruma sqlite libpq
+RUN apk add --no-cache libxml2 icu shadow oniguruma sqlite libpq; \
+    apk -U upgrade; \
+    rm -rf /var/cache/apk/*;
 
 ENV LOCAL_USER_ID=9001
 ENV LOCAL_GROUP_ID=9001

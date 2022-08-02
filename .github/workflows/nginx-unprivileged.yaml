@@ -9,14 +9,27 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@master
-      - name: Install buildx
+      -
+        name: Checkout code
+        uses: actions/checkout@v3
+      -
+        name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+      -
+        name: Set up Docker Buildx
         id: buildx
-        uses: crazy-max/ghaction-docker-buildx@v1
-        with:
-          buildx-version: latest
-      - name: login to docker hub
+        uses: docker/setup-buildx-action@v2
+      -
+        name: Inspect builder
+        run: |
+          echo "Name:      ${{ steps.buildx.outputs.name }}"
+          echo "Endpoint:  ${{ steps.buildx.outputs.endpoint }}"
+          echo "Status:    ${{ steps.buildx.outputs.status }}"
+          echo "Flags:     ${{ steps.buildx.outputs.flags }}"
+          echo "Platforms: ${{ steps.buildx.outputs.platforms }}"
+      -
+        name: login to docker hub
         run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
-      - name: Build the webserver
-        run: cd ${GITHUB_WORKSPACE}/nginx/unprivileged/ && docker buildx build --platform linux/amd64,linux/arm64,linux/arm/v7 -t larsnieuwenhuizen/nginx-unprivileged . --push
+      -
+        name: Build the webserver
+        run: cd ${GITHUB_WORKSPACE}/nginx/unprivileged/ && docker buildx build --platform linux/amd64,linux/arm64 -t larsnieuwenhuizen/nginx-unprivileged . --push

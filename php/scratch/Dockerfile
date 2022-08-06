@@ -7,17 +7,19 @@ ARG PATCH_VERSION=9
 ARG GPG_KEYS="39B641343D8C104B2B146DC3F9C39DC0B9698544 528995BFEDFBA7191D46839EF9BA0ADA31CBD89E F1F692238FBC1666E5A5CCD4199F9DFEF6FFBAFD"
 ARG IGBINARY_VERSION=3.2.7
 ARG IMAGICK_VERSION=3.7.0
+ARG REDIS_VERSION=5.3.7
 
 ENV CONFIGURE_OPTIONS=" \
     --disable-all \
     --enable-bcmath \
     --enable-calendar \
-    --enable-ctype \
     --with-curl \
+    --enable-ctype \
     --enable-dom \
     --enable-exif \
     --with-ffi \
     --enable-fileinfo \
+    --enable-filter \
     --enable-ftp \
     --enable-fpm \
     --with-fpm-user=docker \
@@ -29,23 +31,39 @@ ENV CONFIGURE_OPTIONS=" \
     --with-igbinary \
     --enable-intl \
     --with-ldap \
-    --with-mbstring \
+    --with-libxml \
+    --enable-mbstring \
+    --enable-opcache \
+    --with-openssl \
     --with-mysqli \
+    --enable-pcntl \
+    --enable-pdo \
+    --with-pdo-pgsql \
+    --with-pdo-mysql \
+    --with-pdo-sqlite \
     --with-pgsql \
     --enable-pgsql \
-    --with-pdo-pgsql \
-    --enable-pdo \
-    --enable-mbstring \
-    --enable-filter \
-    --enable-opcache \
+    --with-readline \
+    --enable-posix \
+    --enable-session \
+    --enable-shmop \
+    --enable-simplexml \
     --enable-soap \
-    --with-tokenizer \
-    --with-simplexml \
-    --with-libxml \
+    --with-sodium \
+    --enable-sockets \
+    --enable-sqlite3 \
+    --enable-sysvmsg \
+    --enable-sysvsem \
+    --enable-sysvshm \
+    --enable-tokenizer \
+    --with-tidy \
     --enable-xml \
     --enable-xmlreader \
     --enable-xmlwriter \
-    --with-bz2=/usr/bin/bzip2 \
+    --with-xsl \
+    --with-bz2 \
+    --with-zip \
+    --with-zlib \
 "
 
 ENV DEVELOPMENT_CONFIGURE_OPTIONS=" \
@@ -60,25 +78,49 @@ RUN if [[ $DEVELOPMENT_BUILD ]];  \
       export CONFIGURE_OPTIONS="$CONFIGURE_OPTIONS $DEVELOPMENT_CONFIGURE_OPTIONS"; \
     fi
 
-RUN apk update; \
-    apk upgrade; \
-    apk add  \
-    gcc  \
-    autoconf  \
+
+ENV DEV_BUILD_REQS=" \
+    bzip2-dev  \
+    curl-dev \
+    gettext-dev  \
+    gmp-dev  \
+    icu-dev  \
     libc-dev  \
     libffi-dev  \
-    bison  \
-    re2c  \
-    make  \
-    bzip2  \
-    curl  \
-    gnupg  \
-    zlib-dev  \
+    imagemagick-dev \
+    libsodium-dev  \
+    libxml2-dev  \
+    libpng-dev  \
+    libxslt-dev  \
+    libzip-dev  \
+    oniguruma-dev  \
+    openldap-dev  \
     pcre-dev  \
-    openssl  \
-    icu-dev  \
-    g++
+    readline-dev  \
+    sqlite-dev  \
+    libpq-dev \
+    tidyhtml-dev \
+    zlib-dev \
+"
 
+ENV BASE_REQS="\
+    autoconf  \
+    bison  \
+    bzip2  \
+    curl \
+    gcc  \
+    gnupg  \
+    g++ \
+    icu  \
+    openssl  \
+    make  \
+    re2c \
+"
+
+RUN apk update; \
+    apk upgrade; \
+    apk add --no-cache $DEV_BUILD_REQS \
+    $BASE_REQS
 
 RUN found='' \
     && for server in \
@@ -99,47 +141,14 @@ RUN if [ $found == "yes" ]; then \
 
 WORKDIR /opt
 
-RUN curl -fSL https://www.php.net/distributions/php-$PHP_VERSION.$PATCH_VERSION.tar.gz -o php.tar.gz
-RUN curl -fSL https://www.php.net/distributions/php-$PHP_VERSION.$PATCH_VERSION.tar.gz.asc -o php.tar.gz.asc
-
-RUN gpg --verify php.tar.gz.asc php.tar.gz
-
-RUN cd /opt && tar -xvzf php.tar.gz
+RUN curl -fSL https://www.php.net/distributions/php-$PHP_VERSION.$PATCH_VERSION.tar.gz -o php.tar.gz; \
+    curl -fSL https://www.php.net/distributions/php-$PHP_VERSION.$PATCH_VERSION.tar.gz.asc -o php.tar.gz.asc; \
+    gpg --verify php.tar.gz.asc php.tar.gz; \
+    cd /opt && tar -xvzf php.tar.gz
 
 WORKDIR /opt/php-$PHP_VERSION.$PATCH_VERSION
 
 RUN ./buildconf --force
-
-RUN apk add  \
-    autoconf  \
-    bison  \
-    bzip2  \
-    curl  \
-    curl-dev \
-    gcc  \
-    gettext-dev  \
-    gmp-dev  \
-    gnupg  \
-    g++ \
-    icu  \
-    icu-dev  \
-    libc-dev  \
-    libffi-dev  \
-    openssl  \
-    imagemagick-dev \
-    libxml2-dev  \
-    libpng-dev  \
-    libbz2  \
-    bzip2-dev  \
-    libxml2  \
-    make  \
-    oniguruma-dev  \
-    openldap-dev  \
-    pcre-dev  \
-    sqlite-dev  \
-    libpq-dev \
-    re2c  \
-    zlib-dev
 
 RUN ./configure $CONFIGURE_OPTIONS
 
@@ -147,7 +156,7 @@ RUN make tests
 
 RUN make -j8 && make install
 
-# Note: build igbinary extension from source
+# Note: build igbinary, imagemagick & redis extension from source
 RUN export IGBINARY_BUILD_DIR=$(mktemp -d); \
     cd $IGBINARY_BUILD_DIR; \
     wget https://github.com/igbinary/igbinary/archive/refs/tags/$IGBINARY_VERSION.tar.gz; \
@@ -156,10 +165,9 @@ RUN export IGBINARY_BUILD_DIR=$(mktemp -d); \
     phpize; \
     ./configure CFLAGS="-O2 -g" --enable-igbinary; \
     make; \
-    make install;
-
-# Note: build imagick from source
-RUN export IMAGICK_BUILD_DIR=$(mktemp -d); \
+    make install; \
+    \
+    export IMAGICK_BUILD_DIR=$(mktemp -d); \
     cd $IMAGICK_BUILD_DIR; \
     wget https://github.com/Imagick/imagick/archive/refs/tags/$IMAGICK_VERSION.tar.gz; \
     tar -xvzf $IMAGICK_VERSION.tar.gz; \
@@ -167,7 +175,19 @@ RUN export IMAGICK_BUILD_DIR=$(mktemp -d); \
     phpize; \
     ./configure; \
     make; \
+    make install; \
+    \
+    export REDIS_BUILD_DIR=$(mktemp -d); \
+    cd $REDIS_BUILD_DIR; \
+    wget https://github.com/phpredis/phpredis/archive/refs/tags/$REDIS_VERSION.tar.gz; \
+    tar -xvzf $REDIS_VERSION.tar.gz; \
+    cd phpredis-$REDIS_VERSION; \
+    phpize; \
+    ./configure; \
+    make; \
     make install
+
+RUN apk del $BASE_REQS
 
 ######################################
 #   PRODUCTION IMAGE                 #

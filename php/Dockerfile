@@ -61,7 +61,6 @@ RUN set -eux; \
     rm -rf /var/lib/apt/lists/*; \
     composer global require "squizlabs/php_codesniffer"; \
     composer global require "phpunit/phpunit"; \
-    composer global require --no-plugins "localheinz/composer-normalize"; \
     rm -rf /var/cache/composer/*; \
     chmod -R 777 /var/cache/composer
 
